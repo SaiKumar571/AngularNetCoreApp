@@ -1,4 +1,5 @@
 using API.Data;
+using API.Helpers;
 using API.IServices;
 using API.Services;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,8 @@ namespace API.Extensions
                 options.UseSqlite(config.GetConnectionString("DefaultConnection"));
             });
             services.AddScoped<ITokenService,TokenService>();
+            services.AddScoped<IUserRepository,UserRepository>();
+            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
