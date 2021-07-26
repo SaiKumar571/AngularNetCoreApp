@@ -2,10 +2,29 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch ng serve & Chrome",
+            "type": "chrome",
+            "request": "launch",
+            "preLaunchTask": "npm: start",
+            "url": "http://localhost:4200/",
+      
+            // Note: The ./client directory
+            "webRoot": "${workspaceFolder}/client",
+            
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+              "webpack:/*": "${webRoot}/*",
+              "/./*": "${webRoot}/*",
+              "/src/*": "${webRoot}/*",
+              "/*": "*",
+              "/./~/*": "${webRoot}/node_modules/*"
+            }
+          },
+        {
             // Use IntelliSense to find out which attributes exist for C# debugging
             // Use hover for the description of the existing attributes
             // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
-            "name": ".NET Core Launch (web)",
+            "name": ".NET Cpore Launch (web)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
