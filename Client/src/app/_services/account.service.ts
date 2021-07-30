@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 import {map} from 'rxjs/operators'
 import { environment } from 'src/environments/environment';
-import { User } from '../_models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -18,23 +17,23 @@ export class AccountService {
     return this.http.post(this.baseurl+'account/login',model).pipe(
       map((response:any)=>{
         const user=response;
+        console.log(user)
         if (user) {
-        localStorage.setItem('user',JSON.stringify(user));
-        this.CurrentUserSource.next(user);
+          this.setCurrentUser(user);
         }
       })
     );
   }
 
-  setCurrentUser(user:User){
+  setCurrentUser(user:any){
+    localStorage.setItem('user',JSON.stringify(user));
     this.CurrentUserSource.next(user);
   }
   register(model:any){
     return this.http.post(this.baseurl+'account/register',model).pipe(
       map((user)=>{
         if (user) {
-        localStorage.setItem('user',JSON.stringify(user));
-        this.CurrentUserSource.next(user);
+          this.setCurrentUser(user);
         }
       })
     );

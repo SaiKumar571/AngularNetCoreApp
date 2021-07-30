@@ -1,6 +1,6 @@
 {
     "version": "0.2.0",
-    "configurations": [
+    "configurations": [        
         {
             "name": "Launch ng serve & Chrome",
             "type": "chrome",
@@ -48,7 +48,8 @@
         {
             "name": ".NET Core Attach",
             "type": "coreclr",
-            "request": "attach"
+            "request": "attach",
+            "program":"${workspaceFolder}/API/bin/Debug/net5.0/API.exe"
         }
     ]
 }
