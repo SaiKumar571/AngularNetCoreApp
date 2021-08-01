@@ -6,6 +6,7 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.IServices;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,11 +17,13 @@ namespace API.Controllers
     {
         private readonly DataContext dbContext;
         private readonly ITokenService tokenService;
+        private readonly IMapper mapper;
 
-        public AccountController(DataContext dbContext,ITokenService tokenService)
+        public AccountController(DataContext dbContext,ITokenService tokenService,IMapper mapper)
         {
             this.dbContext = dbContext;
             this.tokenService = tokenService;
+            this.mapper = mapper;
         }
         [AllowAnonymous]
         [HttpPost("register")]
@@ -29,19 +32,21 @@ namespace API.Controllers
             using (var hmac=new HMACSHA512())
             {
                 if(await UserExists(registerDTO.Username))return BadRequest("Username is taken.");
-                var user=new AppUser
-                {
-                UserName=registerDTO.Username.ToLower(),
-                PasswordHash=hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDTO.Password)),
-                PasswordSalt=hmac.Key
-                };
+
+                var user=mapper.Map<AppUser>(registerDTO);
+
+
+                user.UserName=registerDTO.Username.ToLower();
+                user.PasswordHash=hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDTO.Password));
+                user.PasswordSalt=hmac.Key;
 
                 dbContext.Users.Add(user);
                 await dbContext.SaveChangesAsync();
 
                 return new UserDTO{
                     Username=registerDTO.Username,
-                    Token=tokenService.CreateToken(user)
+                    Token=tokenService.CreateToken(user),
+                    KnownAs=user.KnownAs
                 };
             }
         }
@@ -50,7 +55,7 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO)
         {
-            var user=await dbContext.Users.Include(p=>p.Photos).SingleOrDefaultAsync(x=>x.UserName==loginDTO.Username);
+            var user=await dbContext.Users.Include(p=>p.Photos).SingleOrDefaultAsync(x=>x.UserName==loginDTO.Username.ToLower());
 
             if(user==null)return Unauthorized("Invalid Username");
 
@@ -67,7 +72,8 @@ namespace API.Controllers
              return new UserDTO{
                     Username=loginDTO.Username,
                     Token=tokenService.CreateToken(user),
-                    photoUrl=user.Photos.FirstOrDefault(x=>x.IsMain)?.URL
+                    photoUrl=user.Photos.FirstOrDefault(x=>x.IsMain)?.URL,
+                    KnownAs=user.KnownAs
                 };
         }
 
