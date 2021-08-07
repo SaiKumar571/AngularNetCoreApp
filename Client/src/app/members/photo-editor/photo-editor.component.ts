@@ -20,7 +20,7 @@ export class PhotoEditorComponent implements OnInit {
   user:any={};
   constructor(private accountService:AccountService,private memberService:MembersService) { 
     this.accountService.currentUser$.subscribe((response)=>{ this.user = response});
-    console.log(this.user.token)  }
+    (this.user.token)  }
 
   ngOnInit(): void {
     this.initializeUploader();

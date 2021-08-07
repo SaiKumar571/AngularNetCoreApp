@@ -17,7 +17,6 @@ export class AccountService {
     return this.http.post(this.baseurl+'account/login',model).pipe(
       map((response:any)=>{
         const user=response;
-        console.log(user)
         if (user) {
           this.setCurrentUser(user);
         }
