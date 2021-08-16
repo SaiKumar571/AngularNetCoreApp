@@ -29,7 +29,6 @@ namespace API.Controllers
             this.mapper = mapper;
             this.photoService = photoService;
         }
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MemberDTO>>> GetUsers([FromQuery]UserParams userParams )
         {
